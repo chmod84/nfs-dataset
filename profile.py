@@ -24,7 +24,6 @@ request = pc.makeRequestRSpec()
 imageList = [
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD', 'UBUNTU 18.04'),
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU16-64-STD', 'UBUNTU 16.04'),
-    ('urn:publicid:IDN+emulab.net+image+emulab-ops//CENTOS7-64-STD', 'CENTOS 7'),
 ]
 
 # Do not change these unless you change the setup scripts too.
@@ -49,35 +48,55 @@ pc.defineParameter("phystype",  "Optional physical node type",
                    longDescription="Specify a physical node type (pc3000,d710,etc) " +
                    "instead of letting the resource mapper choose for you.")
 
+pc.defineParameter("node1",  "Node 1 URN",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Provide the URN of node1, if available")
+
+pc.defineParameter("node2",  "Node 2 URN",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Provide the URN of node2, if available")
+
+pc.defineParameter("node3",  "Node 3 URN",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Provide the URN of node3, if available")
+
+pc.defineParameter("node4",  "Node 4 URN",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Provide the URN of node4, if available")
+
+
 # Always need this when using parameters
 params = pc.bindParameters()
 
-# The NFS network. All these options are required.
-nfsLan = request.LAN(nfsLanName)
-nfsLan.best_effort       = True
-nfsLan.vlan_tagging      = True
-nfsLan.link_multiplexing = True
+if params.datasetURN != "":
+	# The NFS network. All these options are required.
+	nfsLan = request.LAN(nfsLanName)
+	nfsLan.best_effort       = True
+	nfsLan.vlan_tagging      = True
+	nfsLan.link_multiplexing = True
 
-# The NFS server.
-nfsServer = request.RawPC(nfsServerName)
-nfsServer.disk_image = params.osImage
-# Attach server to lan.
-nfsLan.addInterface(nfsServer.addInterface())
-# Initialization script for the server
-nfsServer.addService(pg.Execute(shell="sh", command="sudo /bin/bash /local/repository/nfs-server.sh"))
+	# The NFS server.
+	nfsServer = request.RawPC(nfsServerName)
+	nfsServer.disk_image = params.osImage
+	# Attach server to lan.
+	nfsLan.addInterface(nfsServer.addInterface())
+	# Initialization script for the server
+	nfsServer.addService(pg.Execute(shell="sh", command="sudo /bin/bash /local/repository/nfs-server.sh"))
 
-# Special node that represents the ISCSI device where the dataset resides
-dsnode = request.RemoteBlockstore("dsnode", nfsDirectory)
-dsnode.dataset = params.datasetURN
+	# Special node that represents the ISCSI device where the dataset resides
+	dsnode = request.RemoteBlockstore("dsnode", nfsDirectory)
+	dsnode.dataset = params.datasetURN
 
-# Link between the nfsServer and the ISCSI device that holds the dataset
-dslink = request.Link("dslink")
-dslink.addInterface(dsnode.interface)
-dslink.addInterface(nfsServer.addInterface())
-# Special attributes for this link that we must use.
-dslink.best_effort = True
-dslink.vlan_tagging = True
-dslink.link_multiplexing = True
+	# Link between the nfsServer and the ISCSI device that holds the dataset
+	dslink = request.Link("dslink")
+	dslink.addInterface(dsnode.interface)
+	dslink.addInterface(nfsServer.addInterface())
+	# Special attributes for this link that we must use.
+	dslink.best_effort = True
+	dslink.vlan_tagging = True
+	dslink.link_multiplexing = True
+	pass
+
 
 # The NFS clients, also attached to the NFS lan.
 for i in range(1, params.clientCount+1):
@@ -85,11 +104,18 @@ for i in range(1, params.clientCount+1):
     node.disk_image = params.osImage
     nfsLan.addInterface(node.addInterface())
     # Initialization script for the clients
-    node.addService(pg.Execute(shell="sh", command="sudo /bin/bash /local/repository/nfs-client.sh"))
+    if params.datasetURN != "":
+    	node.addService(pg.Execute(shell="sh", command="sudo /bin/bash /local/repository/nfs-client.sh"))
+        pass
     if params.phystype != "":
         node.hardware_type = params.phystype
         pass
+    key = "node"+i
+    if params.get(key) != ""
+	node.disk_image=params["node%d" %i]
+        pass
     pass
+
 
 # Print the RSpec to the enclosing page.
 pc.printRequestRSpec(request)
