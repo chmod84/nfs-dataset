@@ -1,11 +1,6 @@
-"""This profile sets up a simple NFS server and a network of clients. The NFS server uses
-a long term dataset that is persistent across experiments. In order to use this profile,
-you will need to create your own dataset and use that instead of the demonstration 
-dataset below. If you do not need persistant storage, we have another profile that
-uses temporary storage (removed when your experiment ends) that you can use. 
+"""This profile sets up a network of compute nodes connected to a NFS server which in turn mounts a dataset
 
-Instructions:
-Click on any node in the topology and choose the `shell` menu item. Your shared NFS directory is mounted at `/nfs` on all nodes."""
+"""
 
 # Import the Portal object.
 import geni.portal as portal
@@ -32,7 +27,7 @@ nfsLanName    = "nfsLan"
 nfsDirectory  = "/nfs"
 
 # Number of NFS clients (there is always a server)
-pc.defineParameter("clientCount", "Number of NFS clients",
+pc.defineParameter("clientCount", "Number of Compute Nodes (1-4)",
                    portal.ParameterType.INTEGER, 2)
 
 pc.defineParameter("osImage", "Select OS image",
@@ -104,8 +99,8 @@ for i in range(1, params.clientCount+1):
     node = request.RawPC("node%d" % i)
     node.disk_image = params.osImage
     # Initialization script for the clients
+    nfsLan.addInterface(node.addInterface())
     if params.datasetURN != "":
-        nfsLan.addInterface(node.addInterface())
     	node.addService(pg.Execute(shell="sh", command="sudo /bin/bash /local/repository/nfs-client.sh"))
         pass
     if params.phystype != "":
