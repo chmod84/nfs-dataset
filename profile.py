@@ -112,7 +112,7 @@ for i in range(1, params.clientCount+1):
         pass
     key = "node"+i
     if params[key] != ""
-	node.disk_image=params.[key]
+	node.disk_image=params[key]
         pass
     pass
 
