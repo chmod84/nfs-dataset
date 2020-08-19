@@ -40,6 +40,15 @@ pc.defineParameter("osImage", "Select OS image",
                    portal.ParameterType.IMAGE,
                    imageList[2], imageList)
 
+pc.defineParameter("datasetURN",  "Dataset URN",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Provide the URN of the Dataset you want to use in this experiment")
+
+pc.defineParameter("phystype",  "Optional physical node type",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Specify a physical node type (pc3000,d710,etc) " +
+                   "instead of letting the resource mapper choose for you.")
+
 # Always need this when using parameters
 params = pc.bindParameters()
 
@@ -59,7 +68,7 @@ nfsServer.addService(pg.Execute(shell="sh", command="sudo /bin/bash /local/repos
 
 # Special node that represents the ISCSI device where the dataset resides
 dsnode = request.RemoteBlockstore("dsnode", nfsDirectory)
-dsnode.dataset = "urn:publicid:IDN+emulab.net:portalprofiles+ltdataset+DemoDataset"
+dsnode.dataset = params.datasetURN
 
 # Link between the nfsServer and the ISCSI device that holds the dataset
 dslink = request.Link("dslink")
@@ -77,6 +86,9 @@ for i in range(1, params.clientCount+1):
     nfsLan.addInterface(node.addInterface())
     # Initialization script for the clients
     node.addService(pg.Execute(shell="sh", command="sudo /bin/bash /local/repository/nfs-client.sh"))
+    if params.phystype != "":
+        node.hardware_type = params.phystype
+        pass
     pass
 
 # Print the RSpec to the enclosing page.
