@@ -111,8 +111,8 @@ for i in range(1, params.clientCount+1):
     if params.phystype != "":
         node.hardware_type = params.phystype
         pass
-    if params["node"+i] != "":
-	node.disk_image=params["node"+i]
+    if params["node"+str(i)] != "":
+	node.disk_image=params["node"+str(i)]
         pass
     pass
 
