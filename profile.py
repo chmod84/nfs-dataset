@@ -103,7 +103,6 @@ if params.datasetURN != "":
 for i in range(1, params.clientCount+1):
     node = request.RawPC("node%d" % i)
     node.disk_image = params.osImage
-    if params.datasetURN != "":
     # Initialization script for the clients
     if params.datasetURN != "":
         nfsLan.addInterface(node.addInterface())
