@@ -68,12 +68,13 @@ pc.defineParameter("node4",  "Node 4 URN",
 # Always need this when using parameters
 params = pc.bindParameters()
 
+# The NFS network. All these options are required.
+nfsLan = request.LAN(nfsLanName)
+nfsLan.best_effort       = True
+nfsLan.vlan_tagging      = True
+nfsLan.link_multiplexing = True
+
 if params.datasetURN != "":
-	# The NFS network. All these options are required.
-	nfsLan = request.LAN(nfsLanName)
-	nfsLan.best_effort       = True
-	nfsLan.vlan_tagging      = True
-	nfsLan.link_multiplexing = True
 
 	# The NFS server.
 	nfsServer = request.RawPC(nfsServerName)
@@ -102,9 +103,10 @@ if params.datasetURN != "":
 for i in range(1, params.clientCount+1):
     node = request.RawPC("node%d" % i)
     node.disk_image = params.osImage
-    nfsLan.addInterface(node.addInterface())
+    if params.datasetURN != "":
     # Initialization script for the clients
     if params.datasetURN != "":
+        nfsLan.addInterface(node.addInterface())
     	node.addService(pg.Execute(shell="sh", command="sudo /bin/bash /local/repository/nfs-client.sh"))
         pass
     if params.phystype != "":
