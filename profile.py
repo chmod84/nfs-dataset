@@ -43,6 +43,10 @@ pc.defineParameter("phystype",  "Optional physical node type",
                    longDescription="Specify a physical node type (pc3000,d710,etc) " +
                    "instead of letting the resource mapper choose for you.")
 
+pc.defineParameter("localStorage", "Extra local storage in GB",
+                   portal.ParameterType.INTEGER, 0)
+
+
 pc.defineParameter("node1",  "Node 1 URN",
                    portal.ParameterType.STRING, "",
                    longDescription="Provide the URN of node1, if available")
@@ -109,6 +113,9 @@ for i in range(1, params.clientCount+1):
     if params["node"+str(i)] != "":
 	node.disk_image=params["node"+str(i)]
         pass
+    if params.localStorage != 0:
+        bs = node.Blockstore("bs", "/mydata")
+        bs.size=str(params.localStorage)+"GB"
     pass
 
 
