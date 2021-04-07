@@ -114,7 +114,8 @@ for i in range(1, params.clientCount+1):
 	node.disk_image=params["node"+str(i)]
         pass
     if params.localStorage != 0:
-        bs = node.Blockstore("bs", "/mydata")
+	bsName="bs"+str(i)
+        bs = node.Blockstore(bsName, "/mydata")
         bs.size=str(params.localStorage)+"GB"
     pass
 
