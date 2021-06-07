@@ -96,10 +96,10 @@ if params.datasetURN != "":
 	# Special node that represents the ISCSI device where the dataset resides
 	dsnode = request.RemoteBlockstore("dsnode", nfsDirectory)
 	dsnode.dataset = params.datasetURN
+	dsnode.readonly = False
 	if params.datasetReadOnly == "True":
 		dsnode.readonly = True
-	else:
-		dsnode.readonly = False
+		pass
 	# Link between the nfsServer and the ISCSI device that holds the dataset
 	dslink = request.Link("dslink")
 	dslink.addInterface(dsnode.interface)
