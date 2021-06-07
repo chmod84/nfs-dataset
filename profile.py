@@ -44,7 +44,7 @@ pc.defineParameter("datasetURN",  "Dataset URN",
                    longDescription="Provide the URN of the Dataset you want to use in this experiment")
 
 pc.defineParameter("datasetReadOnly", "Mount Dataset Readonly",
-                   portal.ParameterType.BOOLEAN,
+                   portal.ParameterType.STRING,
                    trueFalse[0], trueFalse)
 
 
@@ -96,8 +96,10 @@ if params.datasetURN != "":
 	# Special node that represents the ISCSI device where the dataset resides
 	dsnode = request.RemoteBlockstore("dsnode", nfsDirectory)
 	dsnode.dataset = params.datasetURN
-	dsnode.readonly = params.datasetReadOnly
-
+	if params.datasetReadonly == "True":
+		dsnode.readonly = True
+	else:
+		dsnode.readonly = False
 	# Link between the nfsServer and the ISCSI device that holds the dataset
 	dslink = request.Link("dslink")
 	dslink.addInterface(dsnode.interface)
