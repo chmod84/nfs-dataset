@@ -21,6 +21,11 @@ imageList = [
     ('urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU16-64-STD', 'UBUNTU 16.04'),
 ]
 
+trueFalse = [
+    ('False', 'False'),
+    ('True', 'True'),
+]
+
 # Do not change these unless you change the setup scripts too.
 nfsServerName = "nfs"
 nfsLanName    = "nfsLan"
@@ -37,6 +42,11 @@ pc.defineParameter("osImage", "Select OS image",
 pc.defineParameter("datasetURN",  "Dataset URN",
                    portal.ParameterType.STRING, "",
                    longDescription="Provide the URN of the Dataset you want to use in this experiment")
+
+pc.defineParameter("datasetReadOnly", "Mount Dataset Readonly",
+                   portal.ParameterType.BOOLEAN,
+                   trueFalse[0], trueFalse)
+
 
 pc.defineParameter("phystype",  "Optional physical node type",
                    portal.ParameterType.STRING, "",
@@ -86,6 +96,7 @@ if params.datasetURN != "":
 	# Special node that represents the ISCSI device where the dataset resides
 	dsnode = request.RemoteBlockstore("dsnode", nfsDirectory)
 	dsnode.dataset = params.datasetURN
+	dsnode.readonly = params.datasetReadOnly
 
 	# Link between the nfsServer and the ISCSI device that holds the dataset
 	dslink = request.Link("dslink")
