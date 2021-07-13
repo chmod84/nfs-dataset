@@ -32,8 +32,8 @@ nfsLanName    = "nfsLan"
 nfsDirectory  = "/nfs"
 
 # Number of NFS clients (there is always a server)
-pc.defineParameter("clientCount", "Number of Compute Nodes (1-4)",
-                   portal.ParameterType.INTEGER, 2)
+pc.defineParameter("clientCount", "Number of Compute Nodes (1-10)",
+                   portal.ParameterType.INTEGER, 1)
 
 pc.defineParameter("osImage", "Select OS image",
                    portal.ParameterType.IMAGE,
@@ -56,7 +56,6 @@ pc.defineParameter("phystype",  "Optional physical node type",
 pc.defineParameter("localStorage", "Extra local storage in GB",
                    portal.ParameterType.INTEGER, 0)
 
-
 pc.defineParameter("node1",  "Node 1 URN",
                    portal.ParameterType.STRING, "",
                    longDescription="Provide the URN of node1, if available")
@@ -70,6 +69,30 @@ pc.defineParameter("node3",  "Node 3 URN",
                    longDescription="Provide the URN of node3, if available")
 
 pc.defineParameter("node4",  "Node 4 URN",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Provide the URN of node4, if available")
+
+pc.defineParameter("node5",  "Node 5 URN",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Provide the URN of node4, if available")
+
+pc.defineParameter("node6",  "Node 6 URN",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Provide the URN of node4, if available")
+
+pc.defineParameter("node7",  "Node 7 URN",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Provide the URN of node4, if available")
+
+pc.defineParameter("node8",  "Node 8 URN",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Provide the URN of node4, if available")
+
+pc.defineParameter("node9",  "Node 9 URN",
+                   portal.ParameterType.STRING, "",
+                   longDescription="Provide the URN of node4, if available")
+
+pc.defineParameter("node10",  "Node 10 URN",
                    portal.ParameterType.STRING, "",
                    longDescription="Provide the URN of node4, if available")
 
